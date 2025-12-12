@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Orbit</title>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Orbit" />
+  <meta property="og:description" content="A one-screen social fidget: add planets, drag them between rings, and watch your day’s orbit animate. Resets daily to a new seed." />
+  <meta property="og:image" content="https://{DOMAIN}/assets/hero.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://{DOMAIN}/" />
+
+  <!-- Farcaster Mini App meta (JSON-stringified, valid JSON!) -->
+  <meta name="fc:miniapp" content="{&quot;version&quot;: &quot;1&quot;, &quot;name&quot;: &quot;Orbit&quot;, &quot;homeUrl&quot;: &quot;https://{DOMAIN}/&quot;, &quot;iconUrl&quot;: &quot;https://{DOMAIN}/assets/icon.png&quot;, &quot;splashImageUrl&quot;: &quot;https://{DOMAIN}/assets/splash.png&quot;, &quot;splashBackgroundColor&quot;: &quot;#020617&quot;, &quot;subtitle&quot;: &quot;Arrange your circles.&quot;, &quot;description&quot;: &quot;A one-screen social fidget: add planets, drag them between rings, and watch your day’s orbit animate. Resets daily to a new seed.&quot;, &quot;primaryCategory&quot;: &quot;social&quot;, &quot;tags&quot;: [&quot;fun&quot;, &quot;simple&quot;, &quot;utility&quot;], &quot;heroImageUrl&quot;: &quot;https://{DOMAIN}/assets/hero.png&quot;, &quot;ogTitle&quot;: &quot;Orbit&quot;, &quot;ogDescription&quot;: &quot;A one-screen social fidget: add planets, drag them between rings, and watch your day’s orbit animate. Resets daily to a new seed.&quot;, &quot;ogImageUrl&quot;: &quot;https://{DOMAIN}/assets/hero.png&quot;, &quot;screenshotUrls&quot;: [&quot;https://{DOMAIN}/assets/hero.png&quot;], &quot;noindex&quot;: true, &quot;imageUrl&quot;: &quot;https://{DOMAIN}/assets/embed-3x2.png&quot;, &quot;button&quot;: {&quot;title&quot;: &quot;Open&quot;, &quot;action&quot;: {&quot;type&quot;: &quot;launch_frame&quot;, &quot;url&quot;: &quot;https://{DOMAIN}/&quot;}}}" />
+
+  <!-- Backwards compatible Farcaster Frame tags -->
+  <meta property="fc:frame" content="vNext" />
+  <meta property="fc:frame:image" content="https://{DOMAIN}/assets/embed-3x2.png" />
+  <meta property="fc:frame:button:1" content="Open" />
+  <meta property="fc:frame:button:1:action" content="link" />
+  <meta property="fc:frame:button:1:target" content="https://{DOMAIN}/" />
+
+  <!-- launch_frame + required splash fields -->
+  <meta property="fc:frame:action" content="launch_frame" />
+  <meta property="fc:frame:post_url" content="https://{DOMAIN}/" />
+  <meta property="fc:frame:splash_image" content="https://{DOMAIN}/assets/splash.png" />
+  <meta property="fc:frame:splash_background_color" content="#020617" />
+
+  <style>
+    :root {
+      --bg:#020617; --text:#e2e8f0; --muted:#94a3b8; --line:rgba(148,163,184,.25);
+      --card:rgba(255,255,255,.06); --shadow:0 18px 50px rgba(0,0,0,.45);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1100px 800px at 20% 10%, rgba(99,102,241,.18), transparent 52%),
+        radial-gradient(900px 700px at 85% 30%, rgba(34,197,94,.10), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      -webkit-font-smoothing: antialiased;
+    }
+    .page{min-height:100%;display:flex;justify-content:center;padding:16px}
+    .shell{width:100%;max-width:520px;display:flex;flex-direction:column;gap:12px}
+    .banner{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:12px 14px;border:1px solid var(--line);border-radius:16px;
+      background:rgba(2,6,23,.45);backdrop-filter:blur(10px);
+    }
+    .title strong{font-size:14px;letter-spacing:.12em}
+    .title span{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+    #status{font-size:12px;color:var(--muted);text-align:right;max-width:220px;line-height:1.2}
+
+    .wrap{display:flex;flex-direction:column;gap:12px}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 4px}
+    .logo{font-weight:900;letter-spacing:.16em;font-size:13px}
+    .sub{font-size:12px;color:var(--muted);margin-top:3px}
+
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow:var(--shadow);
+      border-radius:var(--radius);
+      padding:14px;
+    }
+    .hint{font-size:12px;color:var(--muted);line-height:1.25;margin-bottom:10px}
+    .arena{display:grid;gap:12px}
+    canvas{
+      width:100%;max-width:360px;aspect-ratio:1/1;
+      border-radius:20px;border:1px solid rgba(148,163,184,.16);
+      background:rgba(0,0,0,.12);
+      margin:0 auto;
+      touch-action:none;
+    }
+    .legend{display:grid;gap:8px;padding:10px;border-radius:18px;background:rgba(0,0,0,.14);border:1px solid rgba(148,163,184,.14)}
+    .leg{display:grid;grid-template-columns:16px 1fr auto;gap:10px;align-items:center}
+    .dot{width:12px;height:12px;border-radius:999px}
+    .name{font-size:13px}
+    .ring{font-size:12px;color:var(--muted)}
+    .empty{color:var(--muted);font-size:12px;text-align:center;padding:8px}
+
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+    .btn{
+      border:1px solid rgba(148,163,184,.22);
+      background:rgba(255,255,255,.08);
+      color:var(--text);
+      border-radius:16px;
+      padding:12px 12px;
+      font-weight:800;
+      font-size:14px;
+      cursor:pointer;
+      transition:transform .08s ease, background .18s ease, border-color .18s ease;
+    }
+    .btn:active{transform:scale(.99)}
+    .btn:hover{background:rgba(255,255,255,.10);border-color:rgba(148,163,184,.30)}
+    .btn.ghost{background:transparent}
+
+    .foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 4px;color:var(--muted);font-size:12px}
+    .envpill{padding:6px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.18);background:rgba(0,0,0,.14)}
+
+    @media (max-width:380px) {
+      .actions{grid-template-columns:1fr}
+      #status{max-width:170px}
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="shell">
+      <div class="banner">
+        <div class="title">
+          <strong>Orbit</strong>
+          <span>Arrange your circles.</span>
+        </div>
+        <div id="status">Loading…</div>
+      </div>
+
+      <div id="app" aria-label="Orbit Mini App"></div>
+    </div>
+  </div>
+
+  <script type="module" src="./script.js"></script>
+</body>
+</html>
