@@ -1,0 +1,31 @@
+{
+  "accountAssociation": {
+    "header": "TODO_REPLACE_BASE64_HEADER",
+    "payload": "TODO_REPLACE_BASE64_PAYLOAD",
+    "signature": "TODO_REPLACE_BASE64_SIGNATURE"
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "Orbit",
+    "homeUrl": "https://{DOMAIN}/",
+    "iconUrl": "https://{DOMAIN}/assets/icon.png",
+    "splashImageUrl": "https://{DOMAIN}/assets/splash.png",
+    "splashBackgroundColor": "#020617",
+    "subtitle": "Arrange your circles.",
+    "description": "A one-screen social fidget: add planets, drag them between rings, and watch your day\u2019s orbit animate. Resets daily to a new seed.",
+    "primaryCategory": "social",
+    "tags": [
+      "fun",
+      "simple",
+      "utility"
+    ],
+    "heroImageUrl": "https://{DOMAIN}/assets/hero.png",
+    "ogTitle": "Orbit",
+    "ogDescription": "A one-screen social fidget: add planets, drag them between rings, and watch your day\u2019s orbit animate. Resets daily to a new seed.",
+    "ogImageUrl": "https://{DOMAIN}/assets/hero.png",
+    "screenshotUrls": [
+      "https://{DOMAIN}/assets/hero.png"
+    ],
+    "noindex": true
+  }
+}
